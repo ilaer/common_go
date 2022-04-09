@@ -1,4 +1,4 @@
-package core
+package standard
 
 // @Title  archive
 // @Description  创建和释放压缩包
