@@ -1,4 +1,4 @@
-package im
+package mim
 
 import (
 	"common_go/standard"
