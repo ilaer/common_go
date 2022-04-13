@@ -16,9 +16,10 @@ import (
 
 // @title    Unzip
 // @description    解压zip文件到指定路径,只解压文件名包含contains字符串的文件.
-// @auth      ila 2021-11-04 14:33:00
+// @author      ila 2021-11-04 14:33:00
 // @param     zipPath  zip文件路径,attachPath 解压路径,contains 包含的字符串
 // @return    error        是否成功
+
 func Unzip(zipPath, attachPath string, contains []string) error {
 
 	z, err := zip.OpenReader(zipPath)
