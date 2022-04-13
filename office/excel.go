@@ -1,8 +1,8 @@
 package office
 
 import (
-	"common_go/standard"
 	"fmt"
+	"github.com/ilaer/common_go/standard"
 	"log"
 	"path/filepath"
 

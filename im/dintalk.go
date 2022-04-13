@@ -1,9 +1,9 @@
 package im
 
 import (
-	"common_go/standard"
 	"fmt"
 	"github.com/blinkbean/dingtalk"
+	"github.com/ilaer/common_go/standard"
 	"log"
 )
 
