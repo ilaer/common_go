@@ -1,10 +1,10 @@
 package network
 
 import (
-	"common_go/im"
-	"common_go/standard"
 	"fmt"
 	"gcore/core"
+	"github.com/ilaer/common_go/im"
+	"github.com/ilaer/common_go/standard"
 	"strings"
 	"time"
 )
