@@ -134,7 +134,7 @@ func HTTPPost(siteURL, httpProxy string, headers map[string]string, data map[str
 
 	cookies := resp.Header.Values("Set-Cookie")
 	if len(cookies) > 0 {
-		fmt.Printf("%v\n", cookies)
+		//fmt.Printf("%v\n", cookies)
 		cookieData, err := json.Marshal(cookies)
 
 		if err != nil {
