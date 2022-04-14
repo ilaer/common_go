@@ -10,3 +10,4 @@
 *.wps
 *.pdf
 *.txt
+/unit_test/
