@@ -29,7 +29,7 @@ func HTTPGet(siteUrl, httpProxy string, headers map[string]string, timeout int) 
 
 	//判断是否使用代理
 	proxy, err := url.Parse(httpProxy)
-	if err == nil {
+	if len(httpProxy) > 3 && err == nil {
 		transport.Proxy = http.ProxyURL(proxy)
 	}
 
@@ -66,11 +66,12 @@ func HTTPGet(siteUrl, httpProxy string, headers map[string]string, timeout int) 
 }
 
 func HTTPPost(siteURL, httpProxy string, headers map[string]string, data map[string]interface{}, timeout int) (body []byte, err error) {
+
 	transport := &http.Transport{}
 
 	//判断是否使用代理
 	proxy, err := url.Parse(httpProxy)
-	if err == nil {
+	if len(httpProxy) > 3 && err == nil {
 		transport.Proxy = http.ProxyURL(proxy)
 	}
 
@@ -81,7 +82,9 @@ func HTTPPost(siteURL, httpProxy string, headers map[string]string, data map[str
 	}
 
 	contentType := headers["Content-Type"]
-
+	if contentType == "" {
+		contentType = headers["content-type"]
+	}
 	//根据content-type判断数据格式化
 	var postData io.Reader
 	//判断data是否有数据
@@ -97,17 +100,27 @@ func HTTPPost(siteURL, httpProxy string, headers map[string]string, data map[str
 			for k, v := range data {
 				values.Set(k, v.(string))
 			}
+
 			postData = strings.NewReader(values.Encode())
 		}
 	}
 
 	//创建post请求
 	req, err := http.NewRequest("POST", siteURL, postData)
+	if err != nil {
+		core.XWarning(fmt.Sprintf("http.NewRequest error : %v", err))
+		return
+	}
+
+	//设置post请求headers
+	for k, v := range headers {
+		req.Header.Set(k, v)
+	}
 
 	//发出post请求
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Printf("client.Do error : %v\n", err)
+		core.XWarning(fmt.Sprintf("client.Do error : %v\n", err))
 		return
 	}
 
@@ -118,17 +131,26 @@ func HTTPPost(siteURL, httpProxy string, headers map[string]string, data map[str
 		return
 	}
 	//把服务器返回的cookie写入本地文件
-	var cookies []string
-	for k, v := range resp.Header {
-		if k == "Set-Cookie" {
-			cookies = append(cookies, v...)
-		}
-	}
+
+	cookies := resp.Header.Values("Set-Cookie")
 	if len(cookies) > 0 {
-		cookieData, _ := json.Marshal(cookies)
-		host := resp.Request.URL.Host
-		host = strings.ReplaceAll(host, ".", "_")
-		ioutil.WriteFile(fmt.Sprintf("%v.txt", host), cookieData, os.ModePerm)
+		fmt.Printf("%v\n", cookies)
+		cookieData, err := json.Marshal(cookies)
+
+		if err != nil {
+			core.XWarning(fmt.Sprintf(" json.Marshal error : %v", err))
+		} else {
+			host := resp.Request.URL.Hostname()
+			host = strings.ReplaceAll(host, ".", "_")
+
+			cookieFileName := fmt.Sprintf("%s.json", host)
+			err = ioutil.WriteFile(cookieFileName, cookieData, os.ModePerm)
+			if err != nil {
+				core.XWarning(fmt.Sprintf("ioutil.WriteFile error : %v", err))
+
+			}
+		}
+
 	}
 
 	defer resp.Body.Close()
