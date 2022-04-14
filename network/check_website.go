@@ -31,7 +31,7 @@ func AccessWebsite(siteUrl, method, httpProxy string, headers map[string]string,
 		standard.XWarning(fmt.Sprintf("current time is :%v", t))
 		method = strings.ToLower(method)
 		if method == "get" {
-			_, err := standard.HttpGet(siteUrl, httpProxy, headers, timeout)
+			_, err := HTTPGet(siteUrl, httpProxy, headers, timeout)
 			if err != nil {
 				core.XWarning(fmt.Sprintf("%v", err))
 
