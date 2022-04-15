@@ -25,7 +25,22 @@ import (
 
 func HTTPGet(siteUrl, httpProxy string, headers map[string]string, timeout int) (body []byte, err error) {
 
+	//判断keep-alive
+	connection := ""
+	for k, v := range headers {
+		kLower := strings.ToLower(k)
+		if kLower == "connection" {
+			connection = strings.ToLower(v)
+			break
+		}
+	}
+
 	transport := &http.Transport{}
+
+	//判断keep-alive
+	if strings.Contains(connection, "close") == true {
+		transport.DisableKeepAlives = true
+	}
 
 	//判断是否使用代理
 	proxy, err := url.Parse(httpProxy)
@@ -67,7 +82,22 @@ func HTTPGet(siteUrl, httpProxy string, headers map[string]string, timeout int) 
 
 func HTTPPost(siteURL, httpProxy string, headers map[string]string, data map[string]interface{}, timeout int) (body []byte, err error) {
 
+	//判断keep-alive
+	connection := ""
+	for k, v := range headers {
+		kLower := strings.ToLower(k)
+		if kLower == "connection" {
+			connection = strings.ToLower(v)
+			break
+		}
+	}
+
 	transport := &http.Transport{}
+
+	//判断keep-alive
+	if strings.Contains(connection, "close") == true {
+		transport.DisableKeepAlives = true
+	}
 
 	//判断是否使用代理
 	proxy, err := url.Parse(httpProxy)
